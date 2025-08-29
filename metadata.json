@@ -1,0 +1,5 @@
+{
+  "name": "Restaurant Service Hub",
+  "description": "A comprehensive web application for restaurants where customers at each table can request services like ordering food or asking for the bill, which are then managed through a centralized service queue for staff.",
+  "requestFramePermissions": []
+}
