@@ -24,7 +24,7 @@ const TableView: React.FC<TableViewProps> = ({ tableId }) => {
         const generatedMenu = await generateMenu();
         setMenu(generatedMenu);
       } catch (err) {
-        setError('Failed to load the menu. Please try again later.');
+        setError('ไม่สามารถโหลดเมนูได้ กรุณาลองใหม่อีกครั้ง');
       } finally {
         setLoading(false);
       }
@@ -65,27 +65,31 @@ const TableView: React.FC<TableViewProps> = ({ tableId }) => {
     if (order.length === 0) return;
     addRequest(tableId, RequestType.Order, { items: order, total: calculateOrderTotal() });
     setOrder([]);
-    showNotification('Your order has been sent to the kitchen!');
+    showNotification('รายการอาหารของคุณถูกส่งไปยังห้องครัวแล้ว!');
   };
   
   const handleRequestBill = () => {
     addRequest(tableId, RequestType.Bill);
-    showNotification('A staff member will bring your bill shortly.');
+    showNotification('พนักงานจะนำบิลมาให้คุณในไม่ช้า');
   };
 
   const handleCallStaff = () => {
     addRequest(tableId, RequestType.Service, { message: 'Customer needs assistance' });
-    showNotification('A staff member is on their way to assist you.');
+    showNotification('พนักงานกำลังเดินทางมาเพื่อช่วยเหลือคุณ');
   };
 
   const calculateOrderTotal = useCallback(() => {
     return order.reduce((total, orderItem) => total + orderItem.item.price * orderItem.quantity, 0);
   }, [order]);
+  
+  const formatCurrency = (amount: number) => {
+      return new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB' }).format(amount);
+  }
 
   if (loading) {
     return <div className="text-center p-10">
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-      <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">Generating today's specials...</p>
+      <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">กำลังสร้างเมนูพิเศษสำหรับวันนี้...</p>
     </div>;
   }
 
@@ -103,7 +107,7 @@ const TableView: React.FC<TableViewProps> = ({ tableId }) => {
       
       {/* Menu Section */}
       <div className="lg:col-span-2">
-        <h1 className="text-3xl font-bold mb-6 text-gray-800 dark:text-white">Menu for Table {tableId}</h1>
+        <h1 className="text-3xl font-bold mb-6 text-gray-800 dark:text-white">เมนูสำหรับโต๊ะ {tableId}</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {menu.map((item) => (
             <div key={item.name} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 flex flex-col justify-between transition-shadow hover:shadow-lg">
@@ -112,12 +116,12 @@ const TableView: React.FC<TableViewProps> = ({ tableId }) => {
                 <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{item.description}</p>
               </div>
               <div className="flex justify-between items-center mt-4">
-                <span className="text-lg font-bold text-blue-600 dark:text-blue-400">${item.price.toFixed(2)}</span>
+                <span className="text-lg font-bold text-blue-600 dark:text-blue-400">{formatCurrency(item.price)}</span>
                 <button
                   onClick={() => handleAddToOrder(item)}
                   className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors text-sm font-semibold"
                 >
-                  Add to Order
+                  เพิ่มในรายการ
                 </button>
               </div>
             </div>
@@ -129,9 +133,9 @@ const TableView: React.FC<TableViewProps> = ({ tableId }) => {
       <div className="lg:col-span-1">
         <div className="sticky top-24">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-            <h2 className="text-2xl font-bold mb-4 border-b pb-2 dark:border-gray-600">Your Order</h2>
+            <h2 className="text-2xl font-bold mb-4 border-b pb-2 dark:border-gray-600">รายการของคุณ</h2>
             {order.length === 0 ? (
-              <p className="text-gray-500 dark:text-gray-400">Your cart is empty. Add items from the menu.</p>
+              <p className="text-gray-500 dark:text-gray-400">ตะกร้าของคุณว่างเปล่า เพิ่มรายการจากเมนูได้เลย</p>
             ) : (
               <>
                 <div className="space-y-3 max-h-60 overflow-y-auto pr-2">
@@ -139,7 +143,7 @@ const TableView: React.FC<TableViewProps> = ({ tableId }) => {
                         <div key={item.name} className="flex justify-between items-center text-sm">
                             <div>
                                 <p className="font-semibold text-gray-800 dark:text-gray-200">{item.name}</p>
-                                <p className="text-gray-500 dark:text-gray-400">${item.price.toFixed(2)}</p>
+                                <p className="text-gray-500 dark:text-gray-400">{formatCurrency(item.price)}</p>
                             </div>
                             <div className="flex items-center gap-2">
                                 <button onClick={() => handleRemoveFromOrder(item.name)} className="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-600 text-lg font-bold flex items-center justify-center">-</button>
@@ -150,27 +154,27 @@ const TableView: React.FC<TableViewProps> = ({ tableId }) => {
                     ))}
                 </div>
                 <div className="border-t dark:border-gray-600 mt-4 pt-4 flex justify-between items-center font-bold text-lg">
-                    <span>Total:</span>
-                    <span>${calculateOrderTotal().toFixed(2)}</span>
+                    <span>รวม:</span>
+                    <span>{formatCurrency(calculateOrderTotal())}</span>
                 </div>
                 <button
                   onClick={handleSendOrder}
                   disabled={order.length === 0}
                   className="w-full mt-4 bg-green-500 text-white py-3 rounded-md hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
                 >
-                  <FoodIcon className="w-5 h-5" /> Place Order
+                  <FoodIcon className="w-5 h-5" /> สั่งอาหาร
                 </button>
               </>
             )}
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mt-6">
-            <h2 className="text-xl font-bold mb-4">Other Services</h2>
+            <h2 className="text-xl font-bold mb-4">บริการอื่นๆ</h2>
             <div className="flex flex-col space-y-3">
               <button onClick={handleRequestBill} className="w-full bg-yellow-500 text-white py-3 rounded-md hover:bg-yellow-600 transition-colors font-semibold flex items-center justify-center gap-2">
-                <BillIcon className="w-5 h-5" /> Request Bill
+                <BillIcon className="w-5 h-5" /> เรียกเก็บเงิน
               </button>
               <button onClick={handleCallStaff} className="w-full bg-red-500 text-white py-3 rounded-md hover:bg-red-600 transition-colors font-semibold flex items-center justify-center gap-2">
-                <ServiceIcon className="w-5 h-5" /> Call Staff
+                <ServiceIcon className="w-5 h-5" /> เรียกพนักงาน
               </button>
             </div>
           </div>

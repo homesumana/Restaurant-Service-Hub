@@ -21,11 +21,11 @@ const Header: React.FC = () => {
         <div className="flex items-center space-x-2 sm:space-x-4">
           <NavLink to="/" className={getLinkClass}>
             <HomeIcon className="w-5 h-5" />
-            <span className="hidden sm:inline">Customer View</span>
+            <span className="hidden sm:inline">มุมมองลูกค้า</span>
           </NavLink>
           <NavLink to="/staff" className={getLinkClass}>
             <StaffIcon className="w-5 h-5" />
-            <span className="hidden sm:inline">Staff Dashboard</span>
+            <span className="hidden sm:inline">แดชบอร์ดพนักงาน</span>
           </NavLink>
         </div>
       </nav>

@@ -1,5 +1,5 @@
 {
-  "name": "Restaurant Service Hub",
-  "description": "A comprehensive web application for restaurants where customers at each table can request services like ordering food or asking for the bill, which are then managed through a centralized service queue for staff.",
+  "name": "ศูนย์บริการร้านอาหาร",
+  "description": "เว็บแอปพลิเคชันครบวงจรสำหรับร้านอาหาร ที่ลูกค้าแต่ละโต๊ะสามารถขอบริการต่างๆ เช่น สั่งอาหารหรือเรียกเก็บเงิน ซึ่งจะถูกจัดการผ่านคิวบริการส่วนกลางสำหรับพนักงาน",
   "requestFramePermissions": []
 }
